@@ -1,4 +1,14 @@
+astroid==2.0.4
 aubio==0.4.7
+isort==4.3.4
+lazy-object-proxy==1.3.1
+mccabe==0.6.1
 numpy==1.15.2
 PyAudio==0.2.11
+pylint==2.1.1
+PyQt5==5.11.3
+PyQt5-sip==4.19.13
+six==1.11.0
+typed-ast==1.1.0
 vispy==0.5.3
+wrapt==1.10.11
