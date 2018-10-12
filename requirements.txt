@@ -1,3 +1,4 @@
 aubio==0.4.7
 numpy==1.15.2
+PyAudio==0.2.11
 vispy==0.5.3
