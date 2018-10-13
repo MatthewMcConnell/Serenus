@@ -1,63 +1,16 @@
-# Tempo Mapping Algorithm
+"""
+Matplotlib Animation Example
+
+author: Jake Vanderplas
+email: vanderplas@astro.washington.edu
+website: http://jakevdp.github.com
+license: BSD
+Please feel free to use and modify this, but keep the above information. Thanks!
+"""
+
 import numpy as np
-from numpy import array
-#import matplotlib.pyplot as plot
-
-# Get x values of the sine wave
-
-#time = np.arange(0, 10, 0.1);
-
-# Amplitude of the sine wave is sine of a variable like time
-
-#amplitude = np.sin(time)
-
-# Plot a sine wave using time and amplitude obtained for the sine wave
-
-#plot.plot(amplitude, time)
-
-# Give a title for the sine wave plot
-
-#plot.title('Sine wave')
-
-# Give x axis label for the sine wave plot
-
-#plot.xlabel('Time')
-
-# Give y axis label for the sine wave plot
-
-#plot.ylabel('Amplitude = sin(time)')
-
-#plot.grid(False, which='both')
-
-#plot.axhline(y=0, color='k')
-
-#plot.show()
-
-# Display the sine wave
-
-##plot.show()
-def tempoMapping(list):
-    # Generate a standard list (of 100 values) for our x-axis
-
-    xValues = array(np.arange(0, len(list)));
-    yValues = [];
-    # For each value of the input we have, plot a y-val from the list of generic x-vals we have to make a standard Sine
-    # Curve, then multiply this y-val by by the input list to transform the amplitude
-    for val in range(0,len(list)):
-        yValues.append((list[val] * np.sin(xValues[val])))
-
-    #Make the y-val list into a numpy array
-    numpyY = array(yValues)
-
-    #Test
-    #print(numpyY)
-    #print(xValues)
-
-    #plot.plot(yValues, xValues)
-    #plot.show()
-
-    return xValues, numpyY
-
+from matplotlib import pyplot as plt
+from matplotlib import animation
 
 a = [218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375,
      124.63524627685547, 124.63524627685547, 84.00457763671875, 84.00457763671875, 84.02559661865234, 84.02559661865234,
@@ -104,8 +57,43 @@ a = [218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375,
      140.97206115722656, 141.35560607910156, 141.35560607910156, 141.35560607910156,
      141.35560607910156, 141.44192504882812, 141.44192504882812, 141.44192504882812, 146.92784118652344, 146.92784118652344,
      146.92784118652344, 146.92784118652344]
+# First set up the figure, the axis, and the plot element we want to animate
+fig = plt.figure()
+ax = plt.axes(xlim=(0, 2), ylim=(-2, 2))
+ax.set_yticklabels([])
+ax.set_xticklabels([])
+ax.grid(False)
+plt.axis('off')
+line, = ax.plot([], [], lw=2)
 
-tempoMapping(a);
+# initialization function: plot the background of each frame
+def init():
+    line.set_data([], [])
+    return line,
 
+# animation function.  This is called sequentially
+
+def animate(i):
+    x = np.linspace(0, 2, 1000)
+
+    y = (a[i]/120) * np.sin(2 * np.pi * (x - 0.01 * i))
+    line.set_data(x, y)
+    return line,
+
+# call the animator.  blit=True means only re-draw the parts that have changed.
+anim = animation.FuncAnimation(fig, animate, init_func=init,
+                               frames=200, interval=20, blit=True)
+
+# save the animation as an mp4.  This requires ffmpeg or mencoder to be
+# installed.  The extra_args ensure that the x264 codec is used, so that
+# the video can be embedded in html5.  You may need to adjust this for
+# your system: for more information, see
+# http://matplotlib.sourceforge.net/api/animation_api.html
+#anim.save('basic_animation.mp4', fps=30, extra_args=['-vcodec', 'libx264'])
+
+plt.show()
+
+
+#plt.ion()
 
 
