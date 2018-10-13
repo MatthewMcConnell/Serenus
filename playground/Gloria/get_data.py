@@ -79,3 +79,4 @@ def get_tempo(filein):
         if read < hop_s: break
 
     return array(bpm)
+
