@@ -6,6 +6,9 @@ from matplotlib.animation import FuncAnimation
 np.random.seed(19680801)
 
 
+# Variable to control the pitch up and down
+yPitch = 0
+
 # Create new Figure and an Axes which fills it.
 fig = plt.figure(figsize=(7, 7))
 ax = fig.add_axes([0, 0, 1, 1], frameon=False)
@@ -42,9 +45,16 @@ def update(frame_number):
     # Make all circles bigger.
     rain_drops['size'] += rain_drops['growth']
 
+    global yPitch
+    if (yPitch >= 1):
+        yPitch = 0
+    else:
+        yPitch += 0.01 
+
     # Pick a new position for oldest rain drop, resetting its size,
     # color and growth factor.
-    rain_drops['position'][current_index] = np.random.uniform(0, 1, 2)
+    rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
+    rain_drops['position'][current_index, 1] = np.random.uniform(0+yPitch, 0.01+yPitch, 1)
     rain_drops['size'][current_index] = 5
     rain_drops['color'][current_index] = (0, 0, 0, 1)
     rain_drops['growth'][current_index] = np.random.uniform(50, 200)

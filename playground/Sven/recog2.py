@@ -27,6 +27,7 @@ from __future__ import division
 
 import re
 import sys
+import os
 
 from google.cloud import speech
 from google.cloud.speech import enums
@@ -157,6 +158,9 @@ def listen_print_loop(responses):
 
 
 def main():
+
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/storage/Hackathon/google-api.json"
+
     # See http://g.co/cloud/speech/docs/languages
     # for a list of supported languages.
     language_code = 'en-US'  # a BCP-47 language tag
