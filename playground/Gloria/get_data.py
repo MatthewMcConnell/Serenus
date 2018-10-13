@@ -18,7 +18,7 @@ def get_pitch(filein):
 
     tolerance = 0.8
 
-    pitch_o = pitch("yin", win_s, hop_s, samplerate)
+    pitch_o = pitch("yinfast", win_s, hop_s, samplerate)
     pitch_o.set_unit("midi")
     pitch_o.set_tolerance(tolerance)
 
