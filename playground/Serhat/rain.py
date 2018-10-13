@@ -10,6 +10,7 @@ np.random.seed(19680801)
 yPitch = 0
 
 # Create new Figure and an Axes which fills it.
+
 fig = plt.figure(figsize=(7, 7))
 ax = fig.add_axes([0, 0, 1, 1], frameon=False)
 ax.set_xlim(0, 1), ax.set_xticks([])
@@ -25,15 +26,14 @@ rain_drops = np.zeros(n_drops, dtype=[('position', float, 2),
 # Initialize the raindrops in random positions and with
 # random growth rates.
 rain_drops['position'] = np.random.uniform(0, 1, (n_drops, 2))
-rain_drops['growth'] = np.random.uniform(50, 200, n_drops)
+rain_drops['growth'] = np.random.uniform(100, 800, n_drops)
 
 # Construct the scatter which we will update during animation
 # as the raindrops develop.
 scat = ax.scatter(rain_drops['position'][:, 0], rain_drops['position'][:, 1],
-                  s=rain_drops['size'], lw=0.5, edgecolors=rain_drops['color'],
-                  facecolors='none')
-
-
+                  s=rain_drops['size'], lw=0.5, edgecolors='none',
+                  facecolors=rain_drops['color'])
+plt.style.use('dark_background')
 def update(frame_number):
     # Get an index which we can use to re-spawn the oldest raindrop.
     current_index = frame_number % n_drops
@@ -56,9 +56,14 @@ def update(frame_number):
     rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
     rain_drops['position'][current_index, 1] = np.random.uniform(0+yPitch, 0.01+yPitch, 1)
     rain_drops['size'][current_index] = 5
-    rain_drops['color'][current_index] = (0, 0, 0, 1)
+    #if(tempo[index] < 80):
+    #    rain_drops['color'][current_index] = (0, 1, 0, 1)
+    #elif(tempo[index] > 160):
+    #    rain_drops['color'][current_index] = (1, 0, 0, 1)
+    #else:
+     #   rain_drops['color'][current_index] =
+    rain_drops['color'][current_index] = (0, 0, 1, 1)
     rain_drops['growth'][current_index] = np.random.uniform(50, 200)
-
     # Update the scatter collection, with the new colors, sizes and positions.
     scat.set_edgecolors(rain_drops['color'])
     scat.set_sizes(rain_drops['size'])
@@ -66,5 +71,5 @@ def update(frame_number):
 
 
 # Construct the animation, using the update function as the animation director.
-animation = FuncAnimation(fig, update, interval=10)
+animation = FuncAnimation(fig, update, interval=1)
 plt.show()

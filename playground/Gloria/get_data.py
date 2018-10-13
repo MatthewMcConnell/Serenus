@@ -1,6 +1,6 @@
 import sys
+import numpy as np
 from aubio import source, tempo
-from numpy import array, ma
 
 def get_pitch(filein):
     from aubio import pitch
@@ -31,16 +31,15 @@ def get_pitch(filein):
         samples, read = s()
         pitch = pitch_o(samples)[0]
         confidence = pitch_o.get_confidence()
-        #print("%f %f" % (pitch, confidence))
         pitches += [pitch]
         confidences += [confidence]
         total_frames += read
         if read < hop_s: break
 
-    pitches = array(pitches[1:])
-    confidences = array(confidences[1:])
+    pitches = np.array(pitches[1:])
+    confidences = np.array(confidences[1:])
     # times = [t * hop_s for t in range(len(pitches))]
-    cleaned_pitches = ma.masked_where(confidences < tolerance, pitches)
+    cleaned_pitches = np.ma.masked_where(confidences < tolerance, pitches)
     cleaned_pitches = cleaned_pitches[cleaned_pitches.mask == False] # reliable values
 
     return cleaned_pitches
@@ -72,11 +71,9 @@ def get_tempo(filein):
         is_beat = o(samples)
         if is_beat:
             this_beat = int(total_frames - delay + is_beat[0] * hop_s)
-            #print("beats per minute: %f" % (o.get_bpm()))
             beats.append(this_beat)
             bpm.append(o.get_bpm())
         total_frames += read
         if read < hop_s: break
 
-    return array(bpm)
-
+    return np.array(bpm)
