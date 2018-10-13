@@ -44,4 +44,4 @@ pitches = array(pitches[1:])
 confidences = array(confidences[1:])
 times = [t * hop_s for t in range(len(pitches))]
 cleaned_pitches = ma.masked_where(confidences < tolerance, pitches)
-cleaned_pitches = cleaned_pitches[cleaned_pitches.mask == False]
+cleaned_pitches = cleaned_pitches[cleaned_pitches.mask == False] # reliable values
