@@ -1,7 +1,7 @@
 # Tempo Mapping Algorithm
 import numpy as np
 from numpy import array
-import matplotlib.pyplot as plot
+#import matplotlib.pyplot as plot
 
 # Get x values of the sine wave
 
@@ -50,13 +50,13 @@ def tempoMapping(list):
     numpyY = array(yValues)
 
     #Test
-    print(numpyY)
-    print(xValues)
+    #print(numpyY)
+    #print(xValues)
 
-    plot.plot(yValues, xValues)
-    plot.show()
+    #plot.plot(yValues, xValues)
+    #plot.show()
 
-    return numpyY,xValues
+    return xValues, numpyY
 
 
 a = [218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375, 218.6312255859375,
