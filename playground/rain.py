@@ -8,19 +8,6 @@ import atexit
 # Fixing random state for reproducibility
 np.random.seed(19680801)
 
-# playing the music
-pA = pyaudio.PyAudio()
-wav = wave.open("/storage/Media/Music/80s.wav")
-stream = pA.open(format =
-                pA.get_format_from_width(wav.getsampwidth()),
-                channels = wav.getnchannels(),
-                rate = wav.getframerate(),
-                output = True)
-
-chunk = 1024
-
-data = wav.readframes(chunk)
-
 
 # Variable to control the pitch up and down
 yPitch = aub.get_pitch("/storage/Media/Music/80s.wav")
@@ -83,17 +70,10 @@ def update(frame_number):
     scat.set_sizes(rain_drops['size'])
     scat.set_offsets(rain_drops['position'])
 
-    global data
-    global stream
-    stream.write(data)
-    data = wav.readframes(chunk)
-
 
 # Construct the animation, using the update function as the animation director.
 animation = FuncAnimation(fig, update, interval=10)
 plt.show()
-
-
 def cleanUp ():
     try:
         stream.close()    
