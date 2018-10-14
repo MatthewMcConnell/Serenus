@@ -13,6 +13,17 @@ import mutagen.wavpack
 # Random seed
 np.random.seed(29680801)
 
+# Audio
+pA = pyaudio.PyAudio()
+wav = wave.open("../../80s.wav")
+stream = pA.open(format =
+                pA.get_format_from_width(wav.getsampwidth()),
+                channels = wav.getnchannels(),
+                rate = wav.getframerate(),
+                output = True)
+chunk = 1250
+data = wav.readframes(chunk)
+
 # Constant declarations
 
 INTERVAL = 10
@@ -93,6 +104,12 @@ def update(frame_number):
     scat.set_facecolors(rain_drops['color'])
     scat.set_sizes(rain_drops['size'])
     scat.set_offsets(rain_drops['position'])
+
+    # Write chunk of audio into the output
+    global data
+    global stream
+    stream.write(data)
+    data = wav.readframes(chunk) 
 
 # Construct the animation, using the update function as the animation director.
 animation = FuncAnimation(fig, update, interval=INTERVAL)
