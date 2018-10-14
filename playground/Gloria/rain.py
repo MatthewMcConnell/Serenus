@@ -2,14 +2,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import get_data as aub
+from scale import scale
 import pyaudio, wave
 import atexit
 import random
 # Fixing random state for reproducibility
-np.random.seed(19680801)
+np.random.seed(29680801)
+INTERVAL = 10
 
 # Variable to control the pitch up and down
-yPitch = aub.get_pitch("/storage/Media/Music/80s.wav")
+yPitch = aub.get_pitch("../../80s.wav")
+yPitch_scaled = scale(yPitch)
 yPitchIndex = 1
 
 print(yPitch)
@@ -58,14 +61,10 @@ def update(frame_number):
         yPitchIndex = 1
     else:
         yPitchIndex += 1
-    a= np.array(yPitch)
-    def scale(list,ele):
-        
-            return((list[ele-1] - min(list))/ (max(list) - min(list)))
 
-    r = scale(b, yPitchIndex) 
-    g = scale(b, yPitchIndex)
-    b = scale(b, yPitchIndex)#yPitch[int(yPitchIndex)]/50.0
+    r = yPitch_scaled[yPitchIndex-1]
+    g = yPitch_scaled[yPitchIndex-1]
+    b = yPitch_scaled[yPitchIndex-1]#yPitch[int(yPitchIndex)]/50.0
     #g = yPitch[int(yPitchIndex)]/100.0
     #b = yPitch[int(yPitchIndex)]/100.0
     # Pick a new position for oldest rain drop, resetting its size,
@@ -82,9 +81,6 @@ def update(frame_number):
     scat.set_sizes(rain_drops['size'])
     scat.set_offsets(rain_drops['position'])
 
-def get_p(p):
-    return p
-
 # Construct the animation, using the update function as the animation director.
-animation = FuncAnimation(fig, update, interval=get_p(yPitch[1]))
+animation = FuncAnimation(fig, update, interval=INTERVAL)
 plt.show()
