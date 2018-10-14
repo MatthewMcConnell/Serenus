@@ -5,11 +5,18 @@ import get_data as aub
 from scale import listscale, rgbscale
 from wavlength import wavlength
 import pyaudio, wave
-import atexit, random, time, math
+import atexit, random, time, math, sys
 import mutagen.wavpack
+
 # Audio
+
+if len(sys.argv) < 2:
+    print("Usage: python3 rain.py file.wav")
+    raise OSError
+
+PATH = sys.argv[1]
 pA = pyaudio.PyAudio()
-wav = wave.open("../../../test.wav")
+wav = wave.open(PATH)
 stream = pA.open(format =
                 pA.get_format_from_width(wav.getsampwidth()),
                 channels = wav.getnchannels(),
@@ -20,14 +27,14 @@ data = wav.readframes(chunk)
 
 # Constant declarations
 
-INTERVAL = 10
+INTERVAL = 15
 DROP_COUNT = 50
-FILELENGTH = (wavlength("../../../test.wav"))
+FILELENGTH = (wavlength(PATH))
 
 # Variable to control the pitch up and down
-PITCH_LIST = aub.get_pitch("../../../test.wav")
-TEMPO_LIST = aub.get_tempo("../../../test.wav")
-VOLUME = listscale(aub.get_volume("../../../test.wav"))
+PITCH_LIST = aub.get_pitch(PATH)
+TEMPO_LIST = aub.get_tempo(PATH)
+VOLUME = listscale(aub.get_volume(PATH))
 print(len(PITCH_LIST))
 print(len(VOLUME))
 print(TEMPO_LIST)
@@ -63,7 +70,7 @@ rain_drops['growth'] = np.random.uniform(50, 200, DROP_COUNT)
 # Construct the scatter which we will update during animation
 # as the raindrops develop.
 scat = ax.scatter(rain_drops['position'][:, 0], rain_drops['position'][:, 1],
-                  s=20, lw=0.5, edgecolors='none',
+                  s=1, lw=0.5, edgecolors='none',
                   facecolors=rain_drops['color'])
 T0 = time.time()
 print(PITCH_TIME_RATIO)
@@ -84,13 +91,10 @@ def update(frame_number):
     rain_drops['size'] += rain_drops['growth']
 
     r = PITCH_SCALED[time_position-1]
-    g = PITCH_SCALED[time_position-1]
-    b = PITCH_SCALED[time_position-1]
-
-
+    
     rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
     rain_drops['position'][current_index, 1] = np.random.uniform(0.5-VOLUME[volume_position] * VOLUME_SCALING, 0.5+VOLUME[volume_position] * VOLUME_SCALING, 1)
-    rain_drops['size'][current_index] = 5
+    rain_drops['size'][current_index] = 10
     rain_drops['color'][current_index] = (r, 0, 0, 1)
     rain_drops['growth'][current_index] = np.random.uniform(50, 200)
 
@@ -111,3 +115,4 @@ fig.patch.set_facecolor((0.8, 0.9, 0.8))
 #fig.canvas.manager.full_screen_toggle() # toggle fullscreen mode
 #fig.show()
 plt.show()
+
