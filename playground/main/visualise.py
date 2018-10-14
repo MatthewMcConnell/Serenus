@@ -11,6 +11,7 @@ import time
 from Gloria.scale import listscale, rgbscale
 import pyaudio, wave
 import atexit, random, time, math
+import threading
 
 CHUNK = 1024
 total_frames = 0
@@ -145,7 +146,7 @@ def graph(mode, filename):
             yPitch = get_pitch(stream, RATE, CHUNK)
             if yPitch == -1:
                 pass #sort out
-        print(yPitch)
+       # print(yPitch)
 
         # Get an index which we can use to re-spawn the oldest raindrop.
         current_index = frame_number % n_drops
@@ -157,9 +158,12 @@ def graph(mode, filename):
         # Make all circles bigger.
         rain_drops['size'] += rain_drops['growth']
 
-        
+
+        # time.sleep(0.007)
         if (yPitchIndex >= len(yPitch)-1):
-            yPitchIndex = 1
+            print("done")
+            raise
+            #yPitchIndex = 1
         else:
             yPitchIndex += 1
 
@@ -170,19 +174,20 @@ def graph(mode, filename):
         # Pick a new position for oldest rain drop, resetting its size,
         # color and growth factor.
         rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
-        rain_drops['position'][current_index, 1] = np.random.uniform(0.4-VOLUME[yPitchIndex] * VOLUME_SCALING, 0.6-VOLUME[yPitchIndex] * VOLUME_SCALING, 1)
+        rain_drops['position'][current_index, 1] = np.random.uniform(0.5-VOLUME[yPitchIndex] * VOLUME_SCALING, 0.5+VOLUME[yPitchIndex] * VOLUME_SCALING, 1)
         rain_drops['size'][current_index] = 5
         rain_drops['color'][current_index] = (r, 0, 0, 1)
         rain_drops['growth'][current_index] = np.random.uniform(50, 200)
 
         # Update the scatter collection, with the new colors, sizes and positions.
-        scat.set_edgecolors(rain_drops['color'])
+        scat.set_facecolors(rain_drops['color'])
         scat.set_sizes(rain_drops['size'])
         scat.set_offsets(rain_drops['position'])
 
 
     # Construct the animation, using the update function as the animation director.
-    animation = FuncAnimation(fig, update, repeat = False, interval = 10)
+    animation = FuncAnimation(fig, update, repeat = False, interval = ((1/RATE)*10**3)*(len(yPitch)/8))
+    print(len(yPitch))
     fig.patch.set_facecolor((0.8, 0.9, 0.8))
 
     plt.show()
@@ -227,7 +232,7 @@ def get_pitch(stream, RATE, CHUNK):
             pass
         # print("{} / {}".format(pitch,confidence))
 
-    print(signal)
+    #print(signal)
 
     # is_beat = tempo_o(signal)
     # if is_beat:

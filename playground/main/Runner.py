@@ -21,4 +21,9 @@ def from_file(filename):
 #live()
 
 # Visualise data from .wav and play it
-from_file("pythag-chromo-sc.wav")
+#from_file("pythag-chromo-sc.wav")
+from_file("eqt-chromo-sc.wav")
+#from_file("imperial_march.wav")
+#from_file("R2D2-do.wav")
+#from_file("output.wav")
+#from_file("80s.wav")

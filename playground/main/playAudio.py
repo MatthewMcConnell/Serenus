@@ -1,5 +1,6 @@
 import pyaudio  
 import wave  
+import threading
 
 def play(filename):
     #define stream chunk   
