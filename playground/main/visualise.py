@@ -170,7 +170,7 @@ def graph(mode, filename):
         # Pick a new position for oldest rain drop, resetting its size,
         # color and growth factor.
         rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
-        rain_drops['position'][current_index, 1] = np.random.uniform(0.5-VOLUME[yPitchIndex] * VOLUME_SCALING, 0.5+VOLUME[yPitchIndex] * VOLUME_SCALING, 1)
+        rain_drops['position'][current_index, 1] = np.random.uniform(0.4-VOLUME[yPitchIndex] * VOLUME_SCALING, 0.6-VOLUME[yPitchIndex] * VOLUME_SCALING, 1)
         rain_drops['size'][current_index] = 5
         rain_drops['color'][current_index] = (r, 0, 0, 1)
         rain_drops['growth'][current_index] = np.random.uniform(50, 200)
