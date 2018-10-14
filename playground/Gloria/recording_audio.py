@@ -63,10 +63,11 @@ def record():
             confidence = pitch_o.get_confidence()
 
             if (confidence > 0.8):
+                get_p(pitch)
                 pitches.append(pitch)
 
-                if (len(pitches) > 1):
-                    
+                #if (len(pitches) > 1):
+
                 # print("{} / {}".format(pitch,confidence))
             
             is_beat = tempo_o(signal)
@@ -92,3 +93,5 @@ def record():
     p.terminate()
 
     return pitch, bpm, volume
+
+record()
