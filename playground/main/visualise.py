@@ -10,18 +10,26 @@ import atexit
 import time
 
 
+CHUNK = 1024
+total_frames = 0
+RATE = 44100 
+FORMAT = pyaudio.paFloat32 # We use 16bit format per sample
+CHANNELS = 1        
+RECORD_SECONDS = 0.1
+
 get_pitches = []
 bpm = []
 volume = []
 
-def graph(mode, filename):
+tolerance = 0.8
+win_s = 4096 # fft size
+hop_s = CHUNK # hop size
+pitch_o = aubio.pitch("yinfast", win_s, hop_s, RATE)
+pitch_o.set_unit("midi")
+pitch_o.set_tolerance(tolerance)
 
-    CHUNK = 1024
-    total_frames = 0
-    RATE = 44100 
-    FORMAT = pyaudio.paFloat32 # We use 16bit format per sample
-    CHANNELS = 1        
-    RECORD_SECONDS = 0.1
+
+def graph(mode, filename):
 
     if mode == "live":
         # set up live stream
@@ -70,7 +78,7 @@ def graph(mode, filename):
 
 
     # Fixing random state for reproducibility
-    np.random.seed(19680801)
+    #np.random.seed(19680801)
 
     
 
@@ -119,7 +127,7 @@ def graph(mode, filename):
             yPitch = get_pitch(stream, RATE, CHUNK)
             if yPitch == -1:
                 pass #sort out
-        print(yPitch)
+        print(yPitch
 
         # Get an index which we can use to re-spawn the oldest raindrop.
         current_index = frame_number % n_drops
@@ -172,12 +180,6 @@ def graph(mode, filename):
 
 def get_pitch(stream, RATE, CHUNK):
         # setup pitch
-    tolerance = 0.8
-    win_s = 4096 # fft size
-    hop_s = CHUNK # hop size
-    pitch_o = aubio.pitch("yinfast", win_s, hop_s, RATE)
-    pitch_o.set_unit("midi")
-    pitch_o.set_tolerance(tolerance)
 
     ### Ignore tempo for now
     # setup tempo
