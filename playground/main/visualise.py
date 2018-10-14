@@ -8,7 +8,9 @@ import Gloria.get_data as aub
 import wave
 import atexit
 import time
-
+from Gloria.scale import listscale, rgbscale
+import pyaudio, wave
+import atexit, random, time, math
 
 CHUNK = 1024
 total_frames = 0
@@ -28,6 +30,11 @@ pitch_o = aubio.pitch("yinfast", win_s, hop_s, RATE)
 pitch_o.set_unit("midi")
 pitch_o.set_tolerance(tolerance)
 
+INTERVAL = 10
+DROP_COUNT = 50
+
+## CONSTANTS
+VOLUME_SCALING = 0.8
 
 def graph(mode, filename):
 
@@ -84,7 +91,16 @@ def graph(mode, filename):
 
     # Variable to control the pitch up and down
     if mode == "file":
-        yPitch = aub.get_pitch(filename)
+        yPitch = aub.get_pitch(filename) # yPitch       
+        TEMPO_LIST = aub.get_tempo(filename)
+        VOLUME = listscale(aub.get_volume(filename))
+
+        PITCH_SCALED = listscale(yPitch)
+        TEMPO_SCALED = listscale(TEMPO_LIST)
+        print(len(TEMPO_LIST), len(yPitch))
+        # PITCH_TIME_RATIO = len(yPitch) / FILELENGTH
+        # VOLUME_TIME_RATIO = len(VOLUME) / FILELENGTH
+
     else:
         yPitch = get_pitch(stream, RATE, CHUNK)
         if yPitch == -1:
@@ -92,7 +108,8 @@ def graph(mode, filename):
 
     yPitchIndex = 1
 
-    # Create new Figure and an Axes which fills it.
+    # Creates a figurue and removes the toolbar.
+    plt.rcParams['toolbar'] = 'None'
     fig = plt.figure(figsize=(7, 7))
     ax = fig.add_axes([0, 0, 1, 1], frameon=False)
     ax.set_xlim(0, 1), ax.set_xticks([])
@@ -107,14 +124,15 @@ def graph(mode, filename):
 
     # Initialize the raindrops in random positions and with
     # random growth rates.
-    rain_drops['position'] = np.random.uniform(0, 1, (n_drops, 2))
-    rain_drops['growth'] = np.random.uniform(50, 200, n_drops)
+    rain_drops['position'] = np.random.uniform(0.25, 0.50, (DROP_COUNT, 2))
+    rain_drops['growth'] = np.random.uniform(50, 200, DROP_COUNT)
 
     # Construct the scatter which we will update during animation
     # as the raindrops develop.
     scat = ax.scatter(rain_drops['position'][:, 0], rain_drops['position'][:, 1],
-                    s=rain_drops['size'], lw=0.5, edgecolors=rain_drops['color'],
-                    facecolors='none')
+                    s=20, lw=0.5, edgecolors='none',
+                    facecolors=rain_drops['color'])
+    T0 = time.time()
 
 
     def update(frame_number):
@@ -127,7 +145,7 @@ def graph(mode, filename):
             yPitch = get_pitch(stream, RATE, CHUNK)
             if yPitch == -1:
                 pass #sort out
-        print(yPitch
+        print(yPitch)
 
         # Get an index which we can use to re-spawn the oldest raindrop.
         current_index = frame_number % n_drops
@@ -145,12 +163,16 @@ def graph(mode, filename):
         else:
             yPitchIndex += 1
 
+        r = PITCH_SCALED[yPitchIndex]
+        g = PITCH_SCALED[yPitchIndex]
+        b = PITCH_SCALED[yPitchIndex]
+
         # Pick a new position for oldest rain drop, resetting its size,
         # color and growth factor.
         rain_drops['position'][current_index, 0] = np.random.uniform(0, 1, 1)
-        #rain_drops['position'][current_index, 1] = np.random.uniform(0.4+yPitch[yPitchIndex-1]-yPitch[yPitchIndex], 0.6+yPitch[yPitchIndex-1]-yPitch[yPitchIndex], 1)
+        rain_drops['position'][current_index, 1] = np.random.uniform(0.5-VOLUME[yPitchIndex] * VOLUME_SCALING, 0.5+VOLUME[yPitchIndex] * VOLUME_SCALING, 1)
         rain_drops['size'][current_index] = 5
-        rain_drops['color'][current_index] = (0, 0, 0, 1)
+        rain_drops['color'][current_index] = (r, 0, 0, 1)
         rain_drops['growth'][current_index] = np.random.uniform(50, 200)
 
         # Update the scatter collection, with the new colors, sizes and positions.
@@ -161,6 +183,7 @@ def graph(mode, filename):
 
     # Construct the animation, using the update function as the animation director.
     animation = FuncAnimation(fig, update, repeat = False, interval = 10)
+    fig.patch.set_facecolor((0.8, 0.9, 0.8))
 
     plt.show()
 

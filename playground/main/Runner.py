@@ -9,12 +9,12 @@ def live():
 def from_file(filename):
     # get file as stream and pass to visualise and playAudio
 
-    visualise.graph("file", filename)
+    # visualise.graph("file", filename)
 
-    # t1 = threading.Thread(target=visualise.graph, args=("file", filename,))
-    # t1.start()
-    # t2 = threading.Thread(target=playAudio.play, args=(filename,))
-    # t2.start()
+    t1 = threading.Thread(target=visualise.graph, args=("file", filename,))
+    t1.start()
+    t2 = threading.Thread(target=playAudio.play, args=(filename,))
+    t2.start()
 
     
 # Visualise real time data
