@@ -38,7 +38,7 @@ def get_pitch(filein):
 
     pitches = np.array(pitches[1:])
     confidences = np.array(confidences[1:])
-    # times = [t * hop_s for t in range(len(pitches))]
+    #times = [t * hop_s for t in range(len(pitches))]
     cleaned_pitches = np.ma.masked_where(confidences < tolerance, pitches)
     cleaned_pitches = cleaned_pitches[cleaned_pitches.mask == False] # reliable values
 
@@ -54,7 +54,7 @@ def get_tempo(filein):
 
     s = source(filename, samplerate, hop_s)
     samplerate = s.samplerate
-    o = tempo("default", win_s, hop_s, samplerate)
+    tempo_o = tempo("default", win_s, hop_s, samplerate)
 
     # tempo detection delay, in samples
     # default to 4 blocks delay to catch up with
@@ -68,12 +68,37 @@ def get_tempo(filein):
 
     while True:
         samples, read = s()
-        is_beat = o(samples)
+        is_beat = tempo_o(samples)
         if is_beat:
             this_beat = int(total_frames - delay + is_beat[0] * hop_s)
             beats.append(this_beat)
-            bpm.append(o.get_bpm())
+            bpm.append(tempo_o.get_bpm())
         total_frames += read
         if read < hop_s: break
 
     return np.array(bpm)
+
+def get_volume(filein):
+    from aubio import pitch
+
+    filename = filein
+    
+    downsample = 1
+    samplerate = 44100 // downsample
+    hop_s = 512  // downsample # hop size
+
+    s = source(filename, samplerate, hop_s)
+    samplerate = s.samplerate
+
+    volume = []
+
+    # total number of frames read
+    total_frames = 0
+
+    while True:
+        samples, read = s()
+        volume.append(np.sum(samples**2)/len(samples))
+        total_frames += read
+        if read < hop_s: break
+
+    return np.array(volume)
