@@ -9,6 +9,7 @@ import random
 # Fixing random state for reproducibility
 np.random.seed(29680801)
 INTERVAL = 10
+plt.rcParams['toolbar'] = 'None'
 
 # Variable to control the pitch up and down
 yPitch = aub.get_pitch("../../80s.wav")
@@ -83,4 +84,7 @@ def update(frame_number):
 
 # Construct the animation, using the update function as the animation director.
 animation = FuncAnimation(fig, update, interval=INTERVAL)
+fig.patch.set_facecolor((0.8, 0.9, 0.8))
+fig.canvas.manager.full_screen_toggle() # toggle fullscreen mode
+fig.show()
 plt.show()
