@@ -52,7 +52,7 @@ def graph(mode, filename):
                         rate=audio_file.getframerate(),
                         input=True)
 
-       
+
         # stream = p.open(format=FORMAT,
         #                 channels=CHANNELS,
         #                 rate=RATE,
@@ -72,13 +72,16 @@ def graph(mode, filename):
     # Fixing random state for reproducibility
     np.random.seed(19680801)
 
-    init_pitches = get_pitch(stream, RATE, CHUNK)
-    if init_pitches == -1:
-        pass #sort out
+    
 
     # Variable to control the pitch up and down
-    
-    yPitch = init_pitches
+    if mode == "file":
+        yPitch = aub.get_pitch(filename)
+    else:
+        yPitch = get_pitch(stream, RATE, CHUNK)
+        if yPitch == -1:
+            pass #sort out
+
     yPitchIndex = 1
 
     # Create new Figure and an Axes which fills it.
@@ -112,10 +115,11 @@ def graph(mode, filename):
         nonlocal rain_drops
         nonlocal stream
 
-        up_pitches = get_pitch(stream, RATE, CHUNK)
-        if up_pitches == -1:
-            pass #sort out
-        #print(up_pitches)
+        if mode == "live":
+            yPitch = get_pitch(stream, RATE, CHUNK)
+            if yPitch == -1:
+                pass #sort out
+        print(yPitch)
 
         # Get an index which we can use to re-spawn the oldest raindrop.
         current_index = frame_number % n_drops
@@ -128,10 +132,10 @@ def graph(mode, filename):
         rain_drops['size'] += rain_drops['growth']
 
         
-        # if (yPitchIndex >= len(yPitch)-1):
-        #     yPitchIndex = 1
-        # else:
-        #     yPitchIndex += 1
+        if (yPitchIndex >= len(yPitch)-1):
+            yPitchIndex = 1
+        else:
+            yPitchIndex += 1
 
         # Pick a new position for oldest rain drop, resetting its size,
         # color and growth factor.
